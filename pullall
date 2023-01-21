@@ -1,0 +1,28 @@
+#!/bin/bash
+
+declare -a dirs
+
+for d in */ ; do
+	dirs+=($d)
+done
+
+
+for v in ${dirs[@]} ; do
+	echo "===${v}==="
+	cd $v
+	branch=`git branch --show-current`
+	if [[ "$branch" == "main" || "$branch" == "master" ]] ; then
+		if [ -z "$(git status --porcelain)" ]; then
+			# Working directory clean
+			git pull
+		else
+			# Uncommitted changes
+			echo "skipping (uncommited changes)..."
+		fi
+	else
+		echo "skipping (not on main/master branch)..."
+	fi
+	cd ..
+	echo ""
+done
+
